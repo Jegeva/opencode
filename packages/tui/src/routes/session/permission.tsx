@@ -289,7 +289,7 @@ function RejectPrompt(props: {
         title: "Cancel permission rejection",
         group: "Permission",
         run(_input, event) {
-          if (event?.ctrl && event.name === "c" && input.plainText) {
+          if (event?.ctrl && !event.shift && event.name === "c" && input.plainText) {
             input.setText("")
             return
           }

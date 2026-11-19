@@ -211,6 +211,7 @@ export async function createRuntimeLifecycle(input: LifecycleInput): Promise<Lif
   let closed = false
   let sigintRegistered = false
   let detachSigintListener: (() => void) | undefined
+  let shiftPressed = false
 
   const footer = new RunFooter(renderer, {
     directory: input.getDirectory,
@@ -274,8 +275,15 @@ export async function createRuntimeLifecycle(input: LifecycleInput): Promise<Lif
     onSubagentInterrupt: input.onSubagentInterrupt,
   })
 
+  const handleKey = (event: { name: string; ctrl: boolean; shift: boolean; meta: boolean; alt: boolean }) => {
+    shiftPressed = event.shift
+  }
+  renderer.on("key", handleKey)
+
   const sigint = () => {
-    footer.requestExit()
+    if (!shiftPressed) {
+      footer.requestExit()
+    }
   }
 
   const attachSigint = () => {
@@ -310,6 +318,7 @@ export async function createRuntimeLifecycle(input: LifecycleInput): Promise<Lif
     }
 
     closed = true
+    renderer.off("key", handleKey)
     detachSigint()
     let wroteExit = false
 

@@ -75,8 +75,20 @@ export function handleSelectionKey(
   const editing = focus?.hasSelection() && selection.selectedRenderables.includes(focus)
 
   // Kitty can report a non-Latin key name with a Latin base-layout C.
-  if (event.ctrl && (event.name === "c" || event.baseCode === 99 || event.baseCode === 67)) {
+  if (event.ctrl && (event.name === "c" || event.baseCode === 99 || event.baseCode === 67) && !event.shift) {
     if ((copyOnSelect && !editing) || !copy(renderer, toast, clipboard)) {
+      renderer.clearSelection()
+      return
+    }
+
+    event.preventDefault()
+    event.stopPropagation()
+    return
+  }
+
+  // ctrl+shift+c also copies to clipboard
+  if (event.ctrl && event.shift && (event.name === "c" || event.baseCode === 99 || event.baseCode === 67)) {
+    if (!copy(renderer, toast, clipboard)) {
       renderer.clearSelection()
       return
     }

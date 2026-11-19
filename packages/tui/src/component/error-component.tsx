@@ -67,7 +67,7 @@ export function ErrorComponent(props: { error: Error; reset: () => void; mode?: 
   let scroll: ScrollBoxRenderable | undefined
 
   useKeyboard((evt) => {
-    if (evt.ctrl && evt.name === "c") return exit()
+    if (evt.ctrl && !evt.shift && evt.name === "c") return exit()
     if (evt.name === "return") {
       evt.preventDefault()
       evt.stopPropagation()
